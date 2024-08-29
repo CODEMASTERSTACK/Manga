@@ -5,6 +5,7 @@ async function fetchManga(endpoint) {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
+        return await response.json();
         const data = await response.json();
         console.log("Received data:", data); // Add this line for debugging
         return data;
@@ -80,15 +81,20 @@ async function loadMangaByCategory(categoryId) {
 
 // Initialize the page
 async function init() {
-    try {
-        await loadRecentlyAdded();
-        await loadMostReading();
-        await loadPopular();
-        await loadCategories();
-    } catch (error) {
-        console.error("Error initializing page:", error);
-    }
-}
+       try {
+           await loadRecentlyAdded();
+           await loadMostReading();
+           await loadPopular();
+           await loadCategories();
+       } catch (error) {
+           console.error("Error initializing page:", error);
+           // Display an error message to the user
+           const errorMessage = document.getElementById('error-message');
+           if (errorMessage) {
+               errorMessage.textContent = "An error occurred while loading the page. Please try again later.";
+           }
+       }
+   }
 
 // Run initialization when the page loads
 window.onload = init;
