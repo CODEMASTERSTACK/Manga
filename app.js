@@ -1,8 +1,31 @@
 // Fetch manga data from the serverless function
-async function fetchManga(endpoint) {
-    const response = await fetch(`/.netlify/functions/manga-proxy?endpoint=${endpoint}`);
-    return await response.json();
+async function fetchManga(endpoint, params = {}) {
+  const queryString = new URLSearchParams(params).toString();
+  const url = `/.netlify/functions/mangadex-proxy${endpoint}?${queryString}`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching manga:', error);
+    throw error;
+  }
 }
+
+// Example usage:
+fetchManga('/manga', { limit: 10, offset: 0 })
+  .then(data => {
+    // Process and display the manga data
+    console.log(data);
+  })
+  .catch(error => {
+    // Handle any errors
+    console.error('Error:', error);
+  });
 
 // Display manga in a grid
 function displayManga(mangaList, gridId) {
